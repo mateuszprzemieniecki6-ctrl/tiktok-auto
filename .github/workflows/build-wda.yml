@@ -18,15 +18,16 @@ jobs:
       - name: Install appium-webdriveragent
         run: npm install appium-webdriveragent@11.4.1
 
-      - name: Build WDA
+      - name: Build WDA with custom bundle ID
         run: |
           cd node_modules/appium-webdriveragent
-          xcodebuild build-for-testing -project WebDriverAgent.xcodeproj -scheme WebDriverAgentRunner -destination "generic/platform=iOS" -derivedDataPath DerivedData CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO 2>&1 | tail -80
+          xcodebuild build-for-testing             -project WebDriverAgent.xcodeproj             -scheme WebDriverAgentRunner             -destination "generic/platform=iOS"             -derivedDataPath DerivedData             CODE_SIGNING_ALLOWED=NO             CODE_SIGN_IDENTITY=""             CODE_SIGNING_REQUIRED=NO             ONLY_ACTIVE_ARCH=NO             PRODUCT_BUNDLE_IDENTIFIER=com.tiktokbot.WebDriverAgentRunner             2>&1 | tail -80
 
       - name: Package IPA
         run: |
           cd node_modules/appium-webdriveragent
           APP_PATH=$(find DerivedData -name "*.app" -path "*WebDriverAgentRunner*" | head -1)
+          echo "App path: $APP_PATH"
           mkdir -p Payload
           cp -r "$APP_PATH" Payload/
           zip -r WebDriverAgentRunner.ipa Payload
